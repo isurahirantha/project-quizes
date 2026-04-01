@@ -15,23 +15,25 @@ pipeline {
 
         stage('Prepare Environment') {
             steps {
-                // Use Jenkins "Secret File" credential
-                // ID: 'project-secrets-file' (Create this in Jenkins)
                 withCredentials([file(credentialsId: 'project-secrets-file', variable: 'SEC_FILE')]) {
-                    sh 'cp $SEC_FILE .env'
+                    // Changed 'sh cp' to 'bat copy' for Windows
+                    // Use %SEC_FILE% syntax for Windows batch variables
+                    bat 'copy "%SEC_FILE%" .env'
                 }
             }
         }
 
         stage('Build & Test') {
             steps {
-                sh 'mvn clean package -B'
+                // Changed 'sh' to 'bat'
+                bat 'mvn clean package -B'
             }
         }
 
         stage('Docker Build') {
             steps {
                 script {
+                    // Ensure Docker Desktop is running on your Windows machine
                     docker.build("isurah/quiz-backend:${env.BUILD_NUMBER}")
                 }
             }
