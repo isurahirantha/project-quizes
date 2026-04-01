@@ -33,6 +33,14 @@ pipeline {
             }
         }
 
+        stage('Cleanup Stale Containers') {
+            steps {
+                // Remove existing containers that might conflict with the names in docker-compose.yml
+                // '|| exit 0' ensures the build continues even if containers don't exist
+                bat 'docker rm -f quiz-postgres quiz-backend || exit 0'
+            }
+        }
+
         stage('Build & Deploy') {
             steps {
                 // Use docker-compose to build the image and restart the containers
