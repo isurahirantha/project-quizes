@@ -33,9 +33,6 @@ Thumbs.db
 # Docker
 .docker/
 
-# Uploads/Media
-uploads/
-
 # Node.js / Support
 node_modules/
 mobile-app/
