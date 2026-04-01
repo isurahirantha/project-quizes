@@ -7,6 +7,6 @@ public class GenerateHash {
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
         String raw = "Admin@456";
         String encoded = encoder.encode(raw);
-        System.out.println(encoded);
+        System.out.println(encoded);//Test
     }
 }
