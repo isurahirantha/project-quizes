@@ -42,7 +42,8 @@ pipeline {
                 bat "docker rm quiz-app || exit 0"
 
                 // Run the new container
-                bat "docker run -d --name quiz-app -p 8080:8080 isurah/quiz-backend:${env.BUILD_NUMBER}"
+                // bat "docker run -d --name quiz-app -p 8080:8080 isurah/quiz-backend:${env.BUILD_NUMBER}"
+                bat "docker run -d --name quiz-app -p 8080:8080 --env-file .env.jenkins isurah/quiz-backend:${env.BUILD_NUMBER}"
             }
         }
     }
