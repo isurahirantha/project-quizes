@@ -1,0 +1,119 @@
+{
+	"info": {
+		"_postman_id": "quiz-api-collection",
+		"name": "Quiz App API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"admin@quizapp.com\",\n    \"password\": \"Admin@123\"\n}",
+							"options": { "raw": { "language": "json" } }
+						},
+						"url": "http://localhost:8080/api/auth/login"
+					}
+				},
+				{
+					"name": "Change Password",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{token}}" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"currentPassword\": \"Admin@123\",\n    \"newPassword\": \"NewAdmin@456\",\n    \"confirmPassword\": \"NewAdmin@456\"\n}",
+							"options": { "raw": { "language": "json" } }
+						},
+						"url": "http://localhost:8080/api/auth/change-password"
+					}
+				}
+			]
+		},
+		{
+			"name": "Category",
+			"item": [
+				{
+					"name": "Create Category",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{token}}" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"General Knowledge\",\n    \"description\": \"Broad range of topics\",\n    \"price\": 10.00,\n    \"validityDays\": 30,\n    \"active\": true\n}",
+							"options": { "raw": { "language": "json" } }
+						},
+						"url": "http://localhost:8080/api/admin/categories"
+					}
+				},
+				{
+					"name": "List Categories (Public)",
+					"request": {
+						"method": "GET",
+						"url": "http://localhost:8080/api/categories"
+					}
+				}
+			]
+		},
+		{
+			"name": "Payment & Access",
+			"item": [
+				{
+					"name": "Submit Payment (Public)",
+					"request": {
+						"method": "POST",
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{ "key": "userName", "value": "John Doe", "type": "text" },
+								{ "key": "userEmail", "value": "john@example.com", "type": "text" },
+								{ "key": "userMobile", "value": "1234567890", "type": "text" },
+								{ "key": "categoryId", "value": "1", "type": "text" },
+								{ "key": "paymentSlip", "type": "file", "src": "" }
+							]
+						},
+						"url": "http://localhost:8080/api/payments"
+					}
+				},
+				{
+					"name": "Validate Code",
+					"request": {
+						"method": "POST",
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"code\": \"12345678\",\n    \"deviceId\": \"device-abc-123\",\n    \"email\": \"john@example.com\"\n}",
+							"options": { "raw": { "language": "json" } }
+						},
+						"url": "http://localhost:8080/api/access-codes/validate"
+					}
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"if (pm.response.code === 200 && pm.request.url.includes('login')) {",
+					"    var jsonData = pm.response.json();",
+					"    if (jsonData.data && jsonData.data.token) {",
+					"        pm.environment.set('token', jsonData.data.token);",
+					"    }",
+					"}"
+				]
+			}
+		}
+	]
+}
