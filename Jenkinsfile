@@ -38,6 +38,23 @@ pipeline {
                 }
             }
         }
+        stage('Docker Run / Deploy') {
+            steps {
+                script {
+                    // 1. Stop and Remove existing container if it's already running
+                    // We use '|| ver > nul' to prevent the build from failing if the container doesn't exist yet
+                    bat 'docker stop quiz-app || ver > nul'
+                    bat 'docker rm quiz-app || ver > nul'
+    
+                    // 2. Run the new container
+                    // -d: detached mode
+                    // -p: maps port 8080 of container to 8080 of your Windows machine
+                    // --name: gives it a constant name so we can stop it next time
+                    bat "docker run -d --name quiz-app -p 8080:8080 isurah/quiz-backend:${env.BUILD_NUMBER}"
+                }
+            }
+        }
+
     }
 
     post {
