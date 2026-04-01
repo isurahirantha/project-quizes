@@ -6,6 +6,12 @@ pipeline {
         jdk 'Java 17'
     }
 
+    environment {
+        // Combined versioning: Version (from here) + Build Number (from Jenkins)
+        APP_VERSION  = '0.0.1'
+        BUILD_NUMBER = "${env.BUILD_NUMBER}"
+    }
+
     stages {
         stage('Checkout') {
             steps {
@@ -27,23 +33,11 @@ pipeline {
             }
         }
 
-        stage('Docker Build') {
+        stage('Build & Deploy') {
             steps {
-                // Using bat directly to avoid the 'sh' requirement in docker.build
-                bat "docker build -t isurah/quiz-backend:${env.BUILD_NUMBER} ."
-            }
-        }
-
-        stage('Docker Run / Deploy') {
-            steps {
-                // Use 'bat' instead of 'docker.run' to avoid Sandbox Security issues
-                // '|| exit 0' ensures the pipeline doesn't fail if the container isn't there yet
-                bat "docker stop quiz-app || exit 0"
-                bat "docker rm quiz-app || exit 0"
-
-                // Run the new container
-                // bat "docker run -d --name quiz-app -p 8080:8080 isurah/quiz-backend:${env.BUILD_NUMBER}"
-                bat "docker run -d --name quiz-app -p 8080:8080 --env-file .env.jenkins isurah/quiz-backend:${env.BUILD_NUMBER}"
+                // Use docker-compose to build the image and restart the containers
+                // This ensures 'app' can find 'postgres' in the same network
+                bat "docker-compose up -d --build"
             }
         }
     }
